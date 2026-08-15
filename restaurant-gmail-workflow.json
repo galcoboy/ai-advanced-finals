@@ -46,7 +46,7 @@
     },
     {
       "parameters": {
-        "sendTo": "YOUR_EMAIL@gmail.com",
+        "sendTo": "your-email@gmail.com",
         "subject": "=New table booking #{{ $json.body.id }}",
         "emailType": "text",
         "message": "=New reservation at Sunset Bistro\n\nBooking ID: {{ $json.body.id }}\nName: {{ $json.body.customer_name }}\nDate: {{ $json.body.date }}\nTime: {{ $json.body.time }}\nParty size: {{ $json.body.party_size }}\nContact: {{ $json.body.contact || 'not provided' }}",
@@ -66,7 +66,7 @@
     },
     {
       "parameters": {
-        "sendTo": "YOUR_EMAIL@gmail.com",
+        "sendTo": "your-email@gmail.com",
         "subject": "=Booking cancelled #{{ $json.body.id }}",
         "emailType": "text",
         "message": "=A reservation has been cancelled at Sunset Bistro.\n\nBooking ID: {{ $json.body.id }}\nStatus: cancelled",
