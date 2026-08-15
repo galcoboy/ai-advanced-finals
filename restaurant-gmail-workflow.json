@@ -1,0 +1,126 @@
+{
+  "name": "Restaurant Reservations — Gmail",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "restaurant",
+        "responseMode": "onReceived",
+        "options": {}
+      },
+      "id": "a1b2c3d4-webhook-0001",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [260, 300],
+      "webhookId": "restaurant-reservations"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "cond-reservation",
+              "leftValue": "={{ $json.body.event }}",
+              "rightValue": "reservation",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "a1b2c3d4-if-0002",
+      "name": "IF Reservation",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [500, 300]
+    },
+    {
+      "parameters": {
+        "sendTo": "YOUR_EMAIL@gmail.com",
+        "subject": "=New table booking #{{ $json.body.id }}",
+        "emailType": "text",
+        "message": "=New reservation at Sunset Bistro\n\nBooking ID: {{ $json.body.id }}\nName: {{ $json.body.customer_name }}\nDate: {{ $json.body.date }}\nTime: {{ $json.body.time }}\nParty size: {{ $json.body.party_size }}\nContact: {{ $json.body.contact || 'not provided' }}",
+        "options": {}
+      },
+      "id": "a1b2c3d4-gmail-0003",
+      "name": "Gmail — Reservation",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [760, 180],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "REPLACE_AFTER_IMPORT",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "YOUR_EMAIL@gmail.com",
+        "subject": "=Booking cancelled #{{ $json.body.id }}",
+        "emailType": "text",
+        "message": "=A reservation has been cancelled at Sunset Bistro.\n\nBooking ID: {{ $json.body.id }}\nStatus: cancelled",
+        "options": {}
+      },
+      "id": "a1b2c3d4-gmail-0004",
+      "name": "Gmail — Cancellation",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [760, 420],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "REPLACE_AFTER_IMPORT",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "IF Reservation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF Reservation": {
+      "main": [
+        [
+          {
+            "node": "Gmail — Reservation",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Gmail — Cancellation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "tags": []
+}
